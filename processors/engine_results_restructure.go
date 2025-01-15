@@ -21,8 +21,11 @@ func (er *EngineResultsRestructure) Start() {
 	defer er.jobManager.WorkerDone()
 
 	for job := range er.resultChan {
-		fmt.Printf("EngineResultsRestructure: Restructuring result for job ID %d\n", job.ID)
-		time.Sleep(70 * time.Millisecond)
+		for i := 0; i < len(job.Result); i++ {
+			job.Result[i].CvssScores = fmt.Sprintf("%d", i*10)
+			time.Sleep(70 * time.Millisecond) // simulate restructure
+			fmt.Printf("EngineResultsRestructure: Restructuring result for job ID %d\n", job.ID)
+		}
 		er.enrichmentChan <- job
 	}
 	close(er.enrichmentChan)

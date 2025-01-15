@@ -9,4 +9,5 @@ type Job struct {
 type Result struct {
 	 ResultID int
 	 CvssScores string
+	 JobID int
 }
