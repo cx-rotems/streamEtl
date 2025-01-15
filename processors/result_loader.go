@@ -22,7 +22,7 @@ func (rl *ResultLoader) Start() {
 	defer rl.jobManager.WorkerDone()
 
 	for job := range rl.loaderChan {
-		fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
+		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
 
 		// Process results in transactions
 		transaction := make([]types.Result, 0, transactionSize)

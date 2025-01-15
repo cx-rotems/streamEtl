@@ -24,7 +24,7 @@ func (er *EngineResultsRestructure) Start() {
 		for i := 0; i < len(job.Result); i++ {
 			job.Result[i].CvssScores = fmt.Sprintf("%d", i*10)
 			time.Sleep(70 * time.Millisecond) // simulate restructure
-			fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Result[i].ResultID, job.Result[i].JobID)
+		//	fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Result[i].ResultID, job.Result[i].JobID)
 		}
 		er.enrichmentChan <- job
 	}
