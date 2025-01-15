@@ -1,0 +1,32 @@
+package processors
+
+import (
+	"fmt"
+	"streamEtl/manager"
+	"streamEtl/types"
+	"time"
+)
+
+type ResultEnrichment struct {
+	enrichmentChan chan types.Job
+	loaderChan     chan types.Job
+	jobManager     *manager.JobManager
+}
+
+func NewResultEnrichment(enrichmentChan, loaderChan chan types.Job, jm *manager.JobManager) *ResultEnrichment {
+	return &ResultEnrichment{enrichmentChan: enrichmentChan, loaderChan: loaderChan, jobManager: jm}
+}
+
+func (re *ResultEnrichment) Start() {
+	defer re.jobManager.WorkerDone()
+
+	for job := range re.enrichmentChan {
+		fmt.Printf("ResultEnrichment: Enriching result for job ID %d\n", job.ID)
+		for i := 0; i < len(job.Result); i++ {
+			job.Result[i].CvssScores = fmt.Sprintf("%d", i*10)
+		}
+		time.Sleep(60 * time.Millisecond)
+		re.loaderChan <- job
+	}
+	close(re.loaderChan)
+}
