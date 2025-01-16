@@ -18,7 +18,7 @@ func NewResultEnrichment(enrichmentChan, loaderChan chan types.Job, jm *manager.
 }
 
 func (re *ResultEnrichment) Start() {
-	defer re.jobManager.WorkerDone()
+	defer close(re.loaderChan)
 
 	for job := range re.enrichmentChan {
 		for i := 0; i < len(job.Result); i++ {
@@ -27,5 +27,4 @@ func (re *ResultEnrichment) Start() {
 		}
 		re.loaderChan <- job
 	}
-	close(re.loaderChan)
 }

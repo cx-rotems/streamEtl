@@ -18,8 +18,8 @@ func NewEngineResultsRestructure(resultChan, enrichmentChan chan types.Job, jm *
 }
 
 func (er *EngineResultsRestructure) Start() {
-	defer er.jobManager.WorkerDone()
-
+	defer close(er.enrichmentChan)
+	
 	for job := range er.resultChan {
 		for i := 0; i < len(job.Result); i++ {
 			job.Result[i].CvssScores = fmt.Sprintf("%d", i*10)
@@ -28,5 +28,4 @@ func (er *EngineResultsRestructure) Start() {
 		}
 		er.enrichmentChan <- job
 	}
-	close(er.enrichmentChan)
 }

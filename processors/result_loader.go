@@ -19,7 +19,6 @@ func NewResultLoader(loaderChan chan types.Job, jm *manager.JobManager) *ResultL
 }
 
 func (rl *ResultLoader) Start() {
-	defer rl.jobManager.WorkerDone()
 
 	for job := range rl.loaderChan {
 		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
