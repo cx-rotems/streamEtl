@@ -2,7 +2,6 @@ package processors
 
 import (
 	"fmt"
-	"streamEtl/manager"
 	"streamEtl/types"
 	"time"
 )
@@ -10,11 +9,10 @@ import (
 type EngineResultsRestructure struct {
 	resultChan     chan types.Job
 	enrichmentChan chan types.Job
-	jobManager     *manager.JobManager
 }
 
-func NewEngineResultsRestructure(resultChan, enrichmentChan chan types.Job, jm *manager.JobManager) *EngineResultsRestructure {
-	return &EngineResultsRestructure{resultChan: resultChan, enrichmentChan: enrichmentChan, jobManager: jm}
+func NewEngineResultsRestructure(resultChan, enrichmentChan chan types.Job) *EngineResultsRestructure {
+	return &EngineResultsRestructure{resultChan: resultChan, enrichmentChan: enrichmentChan}
 }
 
 func (er *EngineResultsRestructure) Start() {

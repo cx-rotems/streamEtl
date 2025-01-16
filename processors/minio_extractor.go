@@ -2,7 +2,6 @@ package processors
 
 import (
 	//"fmt"
-	"streamEtl/manager"
 	"streamEtl/types"
 	"time"
 )
@@ -10,11 +9,10 @@ import (
 type MinioExtractor struct {
 	minioChan  chan types.Job
 	resultChan chan types.Job
-	jobManager *manager.JobManager
 }
 
-func NewMinioExtractor(minioChan, resultChan chan types.Job, jm *manager.JobManager) *MinioExtractor {
-	return &MinioExtractor{minioChan: minioChan, resultChan: resultChan, jobManager: jm}
+func NewMinioExtractor(minioChan, resultChan chan types.Job) *MinioExtractor {
+	return &MinioExtractor{minioChan: minioChan, resultChan: resultChan}
 }
 
 func (me *MinioExtractor) Start() {

@@ -2,7 +2,6 @@ package processors
 
 import (
 	//"fmt"
-	"streamEtl/manager"
 	"streamEtl/types"
 	"time"
 )
@@ -10,11 +9,10 @@ import (
 type ResultEnrichment struct {
 	enrichmentChan chan types.Job
 	loaderChan     chan types.Job
-	jobManager     *manager.JobManager
 }
 
-func NewResultEnrichment(enrichmentChan, loaderChan chan types.Job, jm *manager.JobManager) *ResultEnrichment {
-	return &ResultEnrichment{enrichmentChan: enrichmentChan, loaderChan: loaderChan, jobManager: jm}
+func NewResultEnrichment(enrichmentChan, loaderChan chan types.Job) *ResultEnrichment {
+	return &ResultEnrichment{enrichmentChan: enrichmentChan, loaderChan: loaderChan}
 }
 
 func (re *ResultEnrichment) Start() {
