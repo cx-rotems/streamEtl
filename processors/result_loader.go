@@ -2,7 +2,6 @@ package processors
 
 import (
 	"fmt"
-	"streamEtl/manager"
 	"streamEtl/types"
 	"time"
 )
@@ -11,11 +10,11 @@ const transactionSize = 4
 
 type ResultLoader struct {
 	loaderChan chan types.Job
-	jobManager *manager.JobManager
+	callback   func(int)
 }
 
-func NewResultLoader(loaderChan chan types.Job, jm *manager.JobManager) *ResultLoader {
-	return &ResultLoader{loaderChan: loaderChan, jobManager: jm}
+func NewResultLoader(loaderChan chan types.Job, callback func(int)) *ResultLoader {
+	return &ResultLoader{loaderChan: loaderChan, callback: callback}
 }
 
 func (rl *ResultLoader) Start() {
@@ -23,7 +22,6 @@ func (rl *ResultLoader) Start() {
 	for job := range rl.loaderChan {
 		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
 
-		// Process results in transactions
 		transaction := make([]types.Result, 0, transactionSize)
 		for _, result := range job.Results {
 			transaction = append(transaction, result)
@@ -34,13 +32,12 @@ func (rl *ResultLoader) Start() {
 			}
 		}
 
-		// Process remaining results if any
 		if len(transaction) > 0 {
 			processTransaction(transaction)
 		}
 
 		// Notify job completion
-		rl.jobManager.JobCompleted(job.ID)
+        rl.callback(job.ID)
 	}
 }
 

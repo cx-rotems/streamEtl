@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
-	"streamEtl/manager"
 	"streamEtl/processors"
 	"streamEtl/types"
 	"syscall"
@@ -19,14 +19,16 @@ func main() {
 	enrichmentChan := make(chan types.Job, bufferSize)
 	loaderChan := make(chan types.Job, bufferSize)
 
-	jobManager := manager.NewJobManager()
+	jobCompleted := func(jobID int) {
+        fmt.Printf("Job %d completed\n", jobID)
+    }
 
 	processes := []processors.ETLProcess{
 		processors.NewJobReceiver(jobChan, minioChan),
 		processors.NewMinioExtractor(minioChan, resultChan),
 		processors.NewEngineResultsRestructure(resultChan, enrichmentChan),
 		processors.NewResultEnrichment(enrichmentChan, loaderChan),
-		processors.NewResultLoader(loaderChan, jobManager),
+		processors.NewResultLoader(loaderChan, jobCompleted),
 	}
 
 	// Start all processes
