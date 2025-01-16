@@ -9,13 +9,15 @@ import (
 	"syscall"
 )
 
+const bufferSize = 1000
+
 func main() {
 	// Create channels with buffer size to prevent potential deadlocks
-	jobChan := make(chan types.Job, 5)
-	minioChan := make(chan types.Job, 5)
-	resultChan := make(chan types.Job, 5)
-	enrichmentChan := make(chan types.Job, 5)
-	loaderChan := make(chan types.Job, 5)
+	jobChan := make(chan types.Job,bufferSize)
+	minioChan := make(chan types.Job, bufferSize)
+	resultChan := make(chan types.Job,bufferSize)
+	enrichmentChan := make(chan types.Job, bufferSize)
+	loaderChan := make(chan types.Job, bufferSize)
 
 	jobManager := manager.NewJobManager()
 
