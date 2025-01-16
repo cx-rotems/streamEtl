@@ -3,6 +3,7 @@ package processors
 import (
 	"fmt"
 	"streamEtl/types"
+	"sync"
 	"time"
 )
 
@@ -18,26 +19,34 @@ func NewResultLoader(loaderChan chan types.Job, callback func(int)) *ResultLoade
 }
 
 func (rl *ResultLoader) Start() {
+	var wg sync.WaitGroup
+	defer func() {
+		wg.Wait()
+	}()
 
 	for job := range rl.loaderChan {
-		//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
+		wg.Add(1)
+		go func(job types.Job) {
+			defer wg.Done()
+			//fmt.Printf("ResultLoader: Processing job ID %d\n", job.ID)
 
-		transaction := make([]types.Result, 0, transactionSize)
-		for _, result := range job.Results {
-			transaction = append(transaction, result)
+			transaction := make([]types.Result, 0, transactionSize)
+			for _, result := range job.Results {
+				transaction = append(transaction, result)
 
-			if len(transaction) == transactionSize {
-				processTransaction(transaction)
-				transaction = transaction[:0]
+				if len(transaction) == transactionSize {
+					processTransaction(transaction)
+					transaction = transaction[:0]
+				}
 			}
-		}
 
-		if len(transaction) > 0 {
-			processTransaction(transaction)
-		}
+			if len(transaction) > 0 {
+				processTransaction(transaction)
+			}
 
-		// Notify job completion
-        rl.callback(job.ID)
+			// Notify job completion
+			rl.callback(job.ID)
+		}(job)
 	}
 }
 

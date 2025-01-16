@@ -6,6 +6,7 @@ import (
 	"os/signal"
 	"streamEtl/processors"
 	"streamEtl/types"
+	"sync"
 	"syscall"
 	"time"
 )
@@ -14,9 +15,9 @@ const bufferSize = 1000
 
 func main() {
 	// Create channels with buffer size to prevent potential deadlocks
-	jobChan := make(chan types.Job,bufferSize)
+	jobChan := make(chan types.Job, bufferSize)
 	minioChan := make(chan types.Job, bufferSize)
-	resultChan := make(chan types.Job,bufferSize)
+	resultChan := make(chan types.Job, bufferSize)
 	enrichmentChan := make(chan types.Job, bufferSize)
 	loaderChan := make(chan types.Job, bufferSize)
 
@@ -44,13 +45,19 @@ func main() {
 	}
 
 	// Send jobs in a separate goroutine
-	go func() {
-		start = time.Now()
-		for i := 1; i <= 3; i++ {
-			jobChan <- types.Job{ID: i}
-		}
-		close(jobChan)
-	}()
+    go func() {
+        start = time.Now()
+        var wg sync.WaitGroup
+        for i := 1; i <= 3; i++ {
+            wg.Add(1)
+            go func(jobID int) {
+                defer wg.Done()
+                jobChan <- types.Job{ID: jobID}
+            }(i)
+        }
+        wg.Wait()
+        close(jobChan)
+    }()
 
 	// Create a channel to handle shutdown signals
 	sigChan := make(chan os.Signal, 1)
