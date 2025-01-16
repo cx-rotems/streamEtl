@@ -39,6 +39,9 @@ func (rl *ResultLoader) Start() {
 		if len(transaction) > 0 {
 			processTransaction(transaction)
 		}
+
+		// Notify job completion
+		rl.jobManager.JobCompleted(job.ID)
 	}
 }
 

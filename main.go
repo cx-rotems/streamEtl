@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-    "time"
 	"streamEtl/manager"
 	"streamEtl/processors"
 	"streamEtl/types"
+	"time"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 		processors.NewResultEnrichment(enrichmentChan, loaderChan, jobManager),
 		processors.NewResultLoader(loaderChan, jobManager),
 	}
-    	
+
 	startTime := time.Now()
 
 	// Start all processes
@@ -37,6 +37,7 @@ func main() {
 	// Send jobs in a separate goroutine
 	go func() {
 		for i := 1; i <= 3; i++ {
+			jobManager.AddJob(i) // Register new job
 			jobChan <- types.Job{ID: i}
 		}
 		close(jobChan)
@@ -46,7 +47,7 @@ func main() {
 	jobManager.WaitForCompletion()
 	fmt.Println("All jobs completed")
 
-    	// Calculate and print the total time taken
+	// Calculate and print the total time taken
 	elapsedTime := time.Since(startTime)
 	fmt.Printf("Total time taken: %v\n", elapsedTime)
 }
