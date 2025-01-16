@@ -22,6 +22,7 @@ func (re *ResultEnrichment) Start() {
 
 	for job := range re.enrichmentChan {
 		for i := 0; i < len(job.Result); i++ {
+			job.Result[i].CvssScores = job.Result[i].CvssScores + " enrichment"
 			time.Sleep(60 * time.Millisecond) // simulate result enrichment
 			//fmt.Printf("ResultEnrichment: Enriching result for result ID %d and job ID  %d\n",  job.Result[i].ResultID,  job.Result[i].JobID) // simulate result enrichment
 		}
