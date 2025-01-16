@@ -7,6 +7,7 @@ import (
 	"streamEtl/processors"
 	"streamEtl/types"
 	"syscall"
+	"time"
 )
 
 const bufferSize = 1000
@@ -19,9 +20,15 @@ func main() {
 	enrichmentChan := make(chan types.Job, bufferSize)
 	loaderChan := make(chan types.Job, bufferSize)
 
+	var start time.Time
+
 	jobCompleted := func(jobID int) {
-        fmt.Printf("Job %d completed\n", jobID)
-    }
+		fmt.Printf("Job %d completed\n", jobID)
+		if jobID == 3 {
+			elapsed := time.Since(start)
+			fmt.Printf("Total time took %s\n", elapsed)
+		}
+	}
 
 	processes := []processors.ETLProcess{
 		processors.NewJobReceiver(jobChan, minioChan),
@@ -38,6 +45,7 @@ func main() {
 
 	// Send jobs in a separate goroutine
 	go func() {
+		start = time.Now()
 		for i := 1; i <= 3; i++ {
 			jobChan <- types.Job{ID: i}
 		}
