@@ -25,7 +25,7 @@ func (rl *ResultLoader) Start() {
 
 		// Process results in transactions
 		transaction := make([]types.Result, 0, transactionSize)
-		for _, result := range job.Result {
+		for _, result := range job.Results {
 			transaction = append(transaction, result)
 
 			if len(transaction) == transactionSize {

@@ -24,7 +24,7 @@ func (me *MinioExtractor) Start() {
 		//fmt.Printf("MinioExtractor: Extracting data for job ID %d\n", job.ID)
 		for i := 0; i < 50; i++ {
 			time.Sleep(100 * time.Millisecond) // simulate download from Minio
-			job.Result = append(job.Result, types.Result{ResultID: i, JobID: job.ID})
+			job.Results = append(job.Results, types.Result{ResultID: i, JobID: job.ID})
 		}
 		me.resultChan <- job
 	}

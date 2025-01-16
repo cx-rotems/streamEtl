@@ -19,12 +19,12 @@ func NewEngineResultsRestructure(resultChan, enrichmentChan chan types.Job, jm *
 
 func (er *EngineResultsRestructure) Start() {
 	defer close(er.enrichmentChan)
-	
+
 	for job := range er.resultChan {
-		for i := 0; i < len(job.Result); i++ {
-			job.Result[i].CvssScores = fmt.Sprintf("%d", i*10)
+		for i := 0; i < len(job.Results); i++ {
+			job.Results[i].CvssScores = fmt.Sprintf("%d", i*10)
 			time.Sleep(70 * time.Millisecond) // simulate restructure
-		//	fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Result[i].ResultID, job.Result[i].JobID)
+				//fmt.Printf("EngineResultsRestructure: Restructuring result for result ID %d and job ID  %d\n", job.Results[i].ResultID, job.Results[i].JobID)
 		}
 		er.enrichmentChan <- job
 	}
